@@ -15,8 +15,10 @@ Lista* sistemaBinario();
 // g++ *.cpp -o exe -lsfml-graphics -lsfml-window -lsfml-system
 int main(){
     sf::RenderWindow window(sf::VideoMode(2560,1600),"Sistema Solar com lista");
+    //a lista de planetas e a variável que é usada para percorrê-los
     Lista *sistema;
     ElementoLista *percorrer = NULL;
+    //a pilha na qual os planetas são guardados
     Pilha *pilha = NULL;
     Astro *elemento;
     Fisica f;
@@ -26,11 +28,15 @@ int main(){
     //variáveis que guardam as informações da posição do mouse na tela
     sf::Mouse mouse;
     sf::Vector2f mousePositionView;
+    //variáveis de tempo utilizadas para regular com que velocidade pode-se retornar os planetas
+    sf::Clock clock;
+    sf::Time elapsed;
 
     sf::Text velocidades;
     int i = 0;
 
     montserrat.loadFromFile("../Font/padrao.ttf");
+    clock.restart();
     
     //Inicialização impressão de nomes
     nomes.setFont(montserrat);
@@ -62,6 +68,8 @@ int main(){
             while(percorrer != NULL){
                 elemento = percorrer->getInfo();
                 elemento->desenhar(&window);
+
+                elapsed = clock.getElapsedTime();
                 
                 nomes.setString(elemento->getNome());
                 nomes.setPosition(elemento->posicaoNaTela().x,elemento->posicaoNaTela().y -10);
@@ -78,6 +86,7 @@ int main(){
                 window.draw(velocidades);
                 window.draw(nomes);
 
+                //serve para retirar os planetas caso clique em cima deles
                 if(mouse.isButtonPressed(sf::Mouse::Left))
                 {
                     if(elemento->contains(mousePositionView))
@@ -85,12 +94,17 @@ int main(){
                        pilha = pilha->insert(pilha, sistema->retirar(percorrer));
                     }
                 }
+                //serve para retornar os planetas após retirá-los, usando assim uma pilha
                 if(mouse.isButtonPressed(sf::Mouse::Right))
                 {
                     if (!pilha->isEmpty(pilha))
                     {
-                        sistema->insert(pilha->top(pilha)->getInfo());
-                        pilha = pilha->pop(pilha);
+                        if (elapsed.asSeconds() > 1)
+                        {
+                            sistema->insert(pilha->top(pilha)->getInfo());
+                            pilha = pilha->pop(pilha);
+                            clock.restart();
+                        }
                     }
                 }
                 

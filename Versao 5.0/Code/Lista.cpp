@@ -52,13 +52,15 @@ void Lista::insert(Astro* elemento){
 }
 ElementoLista* Lista::retirar(ElementoLista* e)
 {
-    if (e->getAnterior() == NULL)
+    if (e == this->primeiro)
     {
         e->getProximo()->setAnterior(NULL);
+        setPrimeiro(e->getProximo());
     }
-    else if (e->getProximo() == NULL)
+    else if (e == this->ultimo)
     {
         e->getAnterior()->setProximo(NULL);
+        setUltimo(e->getAnterior());
     }
     else
     {

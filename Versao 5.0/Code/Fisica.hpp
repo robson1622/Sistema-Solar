@@ -8,20 +8,23 @@
 #include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/Window.hpp"
+#include "Lista.hpp"
+#include "Astro.hpp"
 
-class Lista;
-class Astro;
-class Vetor;
+#pragma once
+
 class Fisica{
     private:
+    sf::Clock clock;
+    sf::Time elapsed;
     //Calcular Forca Resultante
-    Vetor forcaResultante(Lista *inicio,Lista *atual);
+    Vetor forcaResultante(Lista *inicio,ElementoLista *atual);
 
     //Distancia entre dois astros
-    long double distanciaEoclidiana(Vetor v1, Vetor v2); 
+    long double distanciaEuclidiana(Vetor v1, Vetor v2); 
     public:
-    Fisica(){}
-    ~Fisica(){}
+    Fisica();
+    ~Fisica();
 
     //Velocidade Inicial
     void velocidadeInicial(Lista *l);

@@ -2,41 +2,76 @@
 #include "Astro.hpp"
 
 //Criar Astro
-Lista::Lista():p(NULL),next(NULL){}
+Lista::Lista():primeiro(NULL), ultimo(NULL){}
 
-Lista::~Lista(){}
+Lista::~Lista()
+{
+    delete(primeiro);
+    delete(ultimo);
+}
 
 void Lista::start(void){
-    p = NULL;
-    next = NULL;
+    primeiro = NULL;
+    ultimo = NULL;
 }
 //Adicionar Astro
 void Lista::insert(Astro* elemento){
-    if(p == NULL){
+    ElementoLista* novo = new ElementoLista();
+    novo->setInfo(elemento);
+    /*if(p == NULL){
         p = elemento;
     }
     else{
         Lista *nova = new Lista();
         nova->p = elemento;
-        nova->next = next;
-        next = nova;
+        nova->primeiro = primeiro;
+        primeiro = nova;
+    }*/
+
+    if (this->primeiro == NULL)
+    {
+        this->primeiro = novo;
+        this->ultimo = novo;
+    }
+    else
+    {
+        this->ultimo->setProximo(novo);
+        novo->setAnterior(this->ultimo);
+        this->ultimo = novo;
     }
 }
 
-//Pegar proximo
-Lista* Lista::getProximo(void){
-    return next;
+//Pegar primeiro
+ElementoLista* Lista::getPrimeiro(void){
+    return primeiro;
+}
+void Lista::setPrimeiro(ElementoLista* aux)
+{
+    this->primeiro = aux;
 }
 
-//Pegar Elemento
-Astro* Lista::getAstro(void){
-    return p;
+//Pegar ultimo
+ElementoLista* Lista::getUltimo()
+{
+    return this->ultimo;
+}
+void Lista::setUltimo(ElementoLista* aux)
+{
+    this->ultimo = aux;
 }
 
 void Lista::destroy(void){
-    if(next != NULL){
-        next->destroy();
-        delete(next);
+    ElementoLista* p = this->primeiro;
+    ElementoLista* paux = NULL;
+    if(primeiro != NULL){
+       while (p != NULL)
+       {
+           delete(p->getInfo());
+           p = p->getProximo();
+       }
     }
+
+    delete(primeiro);
+    delete(ultimo);
 }
 

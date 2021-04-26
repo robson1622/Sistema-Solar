@@ -1,8 +1,10 @@
 #include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/Window.hpp"
-#pragma once
 #include "Vetor.hpp"
+#include <string.h>
+#include <iostream>
+#pragma once
 
 class Astro{
     private:
@@ -14,6 +16,9 @@ class Astro{
         Vetor velocidade;
         Vetor aceleracao;
         Vetor *centro_de_gravidade;
+        float velocidade_linear;
+        float velocidade_angular;
+        long double distancia_sol;
 
     //Atributos físicos(Teóricos)
     public:
@@ -38,4 +43,11 @@ class Astro{
         sf::Vector2f posicaoNaTela(void);
         //Atribuir especificidades
         void atributosAstro(long double massaN,const char *nomeN,long double distancia,const char* localIMG);
+
+        std::string getVelocidadeLinear();
+        void setVelocidadeLinear(float v);
+        std::string getVelocidadeAngular();
+        void setVelocidadeAngular(float v);
+        const long double getDistanciaDoSol() const;
+        void setDistanciaDoSol(long double d);
 };

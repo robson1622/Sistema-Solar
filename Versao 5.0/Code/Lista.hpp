@@ -1,9 +1,12 @@
+#include "ElementoLista.hpp"
+#pragma once
 
-class Astro;
+
+//Classe que cuida da lista, guardando a informação do primeiro e último elemento da lista
 class Lista{
     private:
-        Astro *p;
-        Lista *next;
+        ElementoLista *primeiro;
+        ElementoLista *ultimo;
     public:
         //Criar Astro
         Lista();
@@ -13,11 +16,12 @@ class Lista{
         //Adicionar Astro
         void insert(Astro* elemento);
 
-        //Pegar proximo
-        Lista* getProximo(void);
-
-        //Pegar Elemento
-        Astro* getAstro(void);
+        //Pegar primeiro
+        ElementoLista* getPrimeiro(void);
+        void setPrimeiro(ElementoLista* aux);
+        //Pegar ultimo
+        ElementoLista* getUltimo();
+        void setUltimo(ElementoLista* aux);
 
         //Apaga listas e astros
         void destroy(void);

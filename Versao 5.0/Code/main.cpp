@@ -5,8 +5,6 @@
 #include "Astro.hpp"
 #include "Fisica.hpp"
 
-
-
 //Todo processo de criacao e atribuicao das caracteristicas do nosso sistema solar vão aquí
 Lista* sistemaSolar();
 
@@ -15,28 +13,34 @@ Lista* sistemaBinario();
 
 // g++ *.cpp -o exe -lsfml-graphics -lsfml-window -lsfml-system
 int main(){
-    sf::RenderWindow window(sf::VideoMode(1920,1080),"Sistema Solar com lista");
+    sf::RenderWindow window(sf::VideoMode(2560,1600),"Sistema Solar com lista");
     Lista *sistema;
-    Lista *percorrer = NULL;
+    ElementoLista *percorrer = NULL;
     Astro *elemento;
     Fisica f;
     sf::Font montserrat;
     sf::Text nomes;
     sf::Color bg(46,43,34);
+
+    sf::Text velocidades;
     int i = 0;
 
-
     montserrat.loadFromFile("../Font/padrao.ttf");
+    
+    //Inicialização impressão de nomes
     nomes.setFont(montserrat);
     nomes.setCharacterSize(10);
+    
+    //Inicialização impressão de velocidades
+    velocidades.setFont(montserrat);
+    velocidades.setCharacterSize(20);
+
     sistema = sistemaSolar();
+    percorrer = sistema->getPrimeiro();
     window.setFramerateLimit(60);
     sf::Image icon;
     icon.loadFromFile("../Astros/logo.png");
     window.setIcon(icon.getSize().x,icon.getSize().y,icon.getPixelsPtr());
-
-
-
 
     while (window.isOpen())
     {
@@ -48,16 +52,31 @@ int main(){
         }
         if(i > 500){
             window.clear(bg);
+            int j = 0 ;
             while(percorrer != NULL){
-                elemento = percorrer->getAstro();
+                elemento = percorrer->getInfo();
                 elemento->desenhar(&window);
+                
                 nomes.setString(elemento->getNome());
                 nomes.setPosition(elemento->posicaoNaTela().x,elemento->posicaoNaTela().y -10);
+                nomes.setCharacterSize(10);
                 window.draw(nomes);
+
+                velocidades.setString("Velocidades Angulares em rad/s:");
+                velocidades.setPosition(20, 10);
+                window.draw(velocidades);
+                nomes.setPosition(20, 30*j+40);
+                nomes.setCharacterSize(20);
+                velocidades.setString(elemento->getVelocidadeAngular());
+                velocidades.setPosition(130,30*j+40);
+                window.draw(velocidades);
+                window.draw(nomes);
+                
+                j++;
                 percorrer = percorrer->getProximo();
             }
             f.inforAstros(sistema);
-            percorrer = sistema;
+            percorrer = sistema->getPrimeiro();
             window.display();
             i = 0;
         }
@@ -101,10 +120,10 @@ Lista* sistemaSolar(){
     marte->atributosAstro(0.1074 * MTERRA ,"Marte",1.52 * DTERRA,"../Astros/Marte.png");
     sistema->insert(marte);
     
-    //Jupter - raio real : 11.2 * RTERRA 
-    Astro *Jupter = new Astro();
-    Jupter->atributosAstro(317.8330 * MTERRA,"Jupter",5.21 * DTERRA,"../Astros/Jupter.png");
-    sistema->insert(Jupter);
+    //Jupiter - raio real : 11.2 * RTERRA 
+    Astro *Jupiter = new Astro();
+    Jupiter->atributosAstro(317.8330 * MTERRA,"Jupiter",5.21 * DTERRA,"../Astros/Jupiter.png");
+    sistema->insert(Jupiter);
     
     //Saturno - raio real : 9.4 * RTERRA 
     Astro *saturno = new Astro();

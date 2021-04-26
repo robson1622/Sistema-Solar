@@ -1,30 +1,31 @@
-#include <math.h>
 #include "Fisica.hpp"
-#include "Lista.hpp"
-#include "Astro.hpp"
 #include <iostream>
 using std::cout;
 using std::endl;
 
-
-
+Fisica::Fisica():clock(), elapsed()
+{
+}
+Fisica::~Fisica()
+{
+}
 //Calcular Forca Resultante
-Vetor Fisica::forcaResultante(Lista *inicio,Lista *atual){
+Vetor Fisica::forcaResultante(Lista *inicio,ElementoLista *atual){
     //F = G M m / r²
     long double G = 6.67e-11;
-    Lista *cont = inicio; 
+    ElementoLista *cont = inicio->getPrimeiro(); 
     Astro *aux;
-    Astro *elemento = atual->getAstro();
+    Astro *elemento = atual->getInfo();
     Vetor forca;
     forca.x = forca.y = 0;
     long double hipotenusa,sen,cos,fmodulo;
 
     while(cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         cont = cont->getProximo();
 
         if(elemento != aux){
-            hipotenusa = distanciaEoclidiana(elemento->getPosicao(),aux->getPosicao());
+            hipotenusa = distanciaEuclidiana(elemento->getPosicao(),aux->getPosicao());
             cos = (elemento->getPosicao().x - aux->getPosicao().x)/hipotenusa;
             sen = (elemento->getPosicao().y - aux->getPosicao().y)/hipotenusa;
             fmodulo = -(G * aux->getMassa() * elemento->getMassa()) / pow(hipotenusa,2);
@@ -36,7 +37,7 @@ Vetor Fisica::forcaResultante(Lista *inicio,Lista *atual){
 }
 
 //Distancia entre dois astros
-long double Fisica::distanciaEoclidiana(Vetor v1, Vetor v2){
+long double Fisica::distanciaEuclidiana(Vetor v1, Vetor v2){
     return (sqrt(pow(v1.x - v2.x,2) + pow(v1.y - v2.y,2)));
 } 
 
@@ -56,7 +57,7 @@ void Fisica::velocidadeInicial(Lista *l){
     long double senA,cosA,senTeta,cosTeta;
     long double VelocidadeModulo,distancia;
     int cos90,sen90;
-    Lista *cont = l; 
+    ElementoLista *cont = l->getPrimeiro(); 
     Astro *aux;
     Vetor posicaoRelativa;
     Vetor velocidade;
@@ -65,7 +66,7 @@ void Fisica::velocidadeInicial(Lista *l){
     sen90 = 1;
     
     while( cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         cont = cont->getProximo();
 
         posicaoRelativa.x = aux->getPosicao().x - aux->getCentro_de_Gravidade()->x;
@@ -84,33 +85,44 @@ void Fisica::velocidadeInicial(Lista *l){
         velocidade.x = VelocidadeModulo * cosTeta;
         velocidade.y = VelocidadeModulo * senTeta;
         
+        aux->setDistanciaDoSol(distancia);
         aux->setVelocidade(velocidade);
+        aux->setVelocidadeLinear(sqrt(aux->getDistanciaDoSol() * sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))));
+        aux->setVelocidadeAngular(sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))/aux->getDistanciaDoSol());
     }
 }
 
 //Atualiza Posicao
 void Fisica::atualizaPosicao(Lista *l){
-    Lista *cont = l ;
-    Astro *aux = l->getAstro();
+    ElementoLista *cont = l->getPrimeiro() ;
+    Astro *aux = cont->getInfo();
     Vetor temp;
     while( cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         cont = cont->getProximo();
         
         temp.x = aux->getPosicao().x + aux->getVelocidade().x;
         temp.y = aux->getPosicao().y + aux->getVelocidade().y;
         aux->setPosicao(temp);
+
+        //atualiza as velocidades após 10 segundos do sistema rodando
+        this->elapsed = clock.getElapsedTime();
+        if (this->elapsed.asSeconds()>=10 && (static_cast<int>(this->elapsed.asSeconds()))%2 == 0)
+        {
+            aux->setVelocidadeLinear(sqrt(aux->getDistanciaDoSol() * sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))));
+            aux->setVelocidadeAngular(sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))/aux->getDistanciaDoSol());
+        }
     }
 }
 
 //Atualiza Velocidade
 void Fisica::atualizaVelocidade(Lista *l){
-    Lista *cont = l;
+    ElementoLista *cont = l->getPrimeiro();
     Astro *aux;
     Vetor temp;
 
     while( cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         cont = cont->getProximo();
         
         temp.x = aux->getVelocidade().x + aux->getAceleracao().x;
@@ -122,13 +134,13 @@ void Fisica::atualizaVelocidade(Lista *l){
 //Atualiza Aceleracao
 void Fisica::atualizaAceleracao(Lista *l){
     // Fg = ma -------->   a = Fg/m
-    Lista *cont = l;
+    ElementoLista *cont = l->getPrimeiro();
     Astro *aux;
     Vetor forca;
     Vetor aceleracao;
 
     while(cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         
         forca = forcaResultante(l,cont);
         aceleracao.x = (forca.x/aux->getMassa()) * FATORACELERACAO;
@@ -141,12 +153,12 @@ void Fisica::atualizaAceleracao(Lista *l){
 
 //Painel de informacoes dos astros
 void Fisica::inforAstros(Lista *l){
-    Lista *cont = l;
+    ElementoLista *cont = l->getPrimeiro();
     Astro *aux;
     system("clear");
     sf::Vector2f temp;
     while(cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         cont = cont->getProximo();
 
         temp.x = (float) aux->getPosicao().x;
@@ -161,7 +173,6 @@ void Fisica::inforAstros(Lista *l){
         cout<<" : Aceleracao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
     }
     cout<<"Posicao do CG : ("<<aux->getCentro_de_Gravidade()->x<<" , "<<aux->getCentro_de_Gravidade()->y<<") "<<endl;
-
 }
 
 //POsicao do centro de gravidade
@@ -169,13 +180,13 @@ void Fisica::inforAstros(Lista *l){
 void Fisica::setPosicaoCentroGravidade(Lista *l){
     long double MassaTotal = 0;
     Vetor somatorio;
-    Lista *cont = l;
+    ElementoLista *cont = l->getPrimeiro();
     Astro *aux;
     Vetor *cg = new Vetor();
     somatorio.x = somatorio.y = 0;
     
     while(cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         cont = cont->getProximo();
 
         MassaTotal += aux->getMassa();
@@ -185,10 +196,10 @@ void Fisica::setPosicaoCentroGravidade(Lista *l){
 
     cg->x = somatorio.x/MassaTotal;
     cg->y = somatorio.y/MassaTotal;
-    cont = l;
+    cont = l->getPrimeiro();
 
     while (cont != NULL){
-        aux = cont->getAstro();
+        aux = cont->getInfo();
         cont = cont->getProximo();
         
         aux->setCentro_de_Gravidade(cg);
@@ -196,7 +207,7 @@ void Fisica::setPosicaoCentroGravidade(Lista *l){
     
 }
 /*
-//Lei de kepler 03 que da uma proporcao que é constante a qualquer astro
+//Lei de kepler 03 que da uma proporção que é constante a qualquer astro
 double Fisica::kepler03(Astro *elemento){
     /*
     T²/R³ = CTE ------> (4*PI²)/(v²*R) = CTE
@@ -204,6 +215,5 @@ double Fisica::kepler03(Astro *elemento){
     w(omega) = 2PI/T
     v = w(omega)r
 
-    Removí, mas a ideia seria que o raio é o raio maio + meno divido por 2, raio médio
-
-    */
+    Removí, mas a ideia seria que o raio é o raio maior + menor divido por 2, raio médio
+*/

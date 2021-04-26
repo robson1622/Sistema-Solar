@@ -2,6 +2,7 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/Window.hpp"
 #include "Lista.hpp"
+#include "Pilha.hpp"
 #include "Astro.hpp"
 #include "Fisica.hpp"
 
@@ -16,11 +17,15 @@ int main(){
     sf::RenderWindow window(sf::VideoMode(2560,1600),"Sistema Solar com lista");
     Lista *sistema;
     ElementoLista *percorrer = NULL;
+    Pilha *pilha = NULL;
     Astro *elemento;
     Fisica f;
     sf::Font montserrat;
     sf::Text nomes;
     sf::Color bg(46,43,34);
+    //variáveis que guardam as informações da posição do mouse na tela
+    sf::Mouse mouse;
+    sf::Vector2f mousePositionView;
 
     sf::Text velocidades;
     int i = 0;
@@ -51,6 +56,7 @@ int main(){
                 window.close();
         }
         if(i > 500){
+            mousePositionView = window.mapPixelToCoords(mouse.getPosition(window));
             window.clear(bg);
             int j = 0 ;
             while(percorrer != NULL){
@@ -71,6 +77,22 @@ int main(){
                 velocidades.setPosition(130,30*j+40);
                 window.draw(velocidades);
                 window.draw(nomes);
+
+                if(mouse.isButtonPressed(sf::Mouse::Left))
+                {
+                    if(elemento->contains(mousePositionView))
+                    {
+                       pilha = pilha->insert(pilha, sistema->retirar(percorrer));
+                    }
+                }
+                if(mouse.isButtonPressed(sf::Mouse::Right))
+                {
+                    if (!pilha->isEmpty(pilha))
+                    {
+                        sistema->insert(pilha->top(pilha)->getInfo());
+                        pilha = pilha->pop(pilha);
+                    }
+                }
                 
                 j++;
                 percorrer = percorrer->getProximo();
@@ -85,7 +107,8 @@ int main(){
         f.atualizaPosicao(sistema);
         i++;
     }
-    sistema->destroy();
+    //sistema->destroy();
+    pilha->liberarPilha(pilha);
     return 0;
 }
 

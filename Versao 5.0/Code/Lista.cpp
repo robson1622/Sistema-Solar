@@ -6,8 +6,18 @@ Lista::Lista():primeiro(NULL), ultimo(NULL){}
 
 Lista::~Lista()
 {
-    delete(primeiro);
-    delete(ultimo);
+    ElementoLista* p = this->primeiro;
+        ElementoLista* paux = NULL;
+        if(primeiro != NULL){
+        while (p != NULL)
+        {
+            delete(p->getInfo());
+            p = p->getProximo();
+        }
+        }
+
+        delete(primeiro);
+        delete(ultimo);
 }
 
 void Lista::start(void){
@@ -40,9 +50,28 @@ void Lista::insert(Astro* elemento){
         this->ultimo = novo;
     }
 }
+ElementoLista* Lista::retirar(ElementoLista* e)
+{
+    if (e->getAnterior() == NULL)
+    {
+        e->getProximo()->setAnterior(NULL);
+    }
+    else if (e->getProximo() == NULL)
+    {
+        e->getAnterior()->setProximo(NULL);
+    }
+    else
+    {
+        e->getAnterior()->setProximo(e->getProximo());
+        e->getProximo()->setAnterior(e->getAnterior());
+    }
+
+    return e;
+}
 
 //Pegar primeiro
-ElementoLista* Lista::getPrimeiro(void){
+ElementoLista* Lista::getPrimeiro(void)
+{
     return primeiro;
 }
 void Lista::setPrimeiro(ElementoLista* aux)

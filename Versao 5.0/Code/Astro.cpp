@@ -21,8 +21,8 @@ long double Astro::getMassa(void){
     return massa;
 }
 
-sf::Sprite* Astro::getForma(void){
-    return &forma;
+sf::Sprite Astro::getForma(void){
+    return forma;
 }
 
 Vetor Astro::getPosicao(void){
@@ -119,4 +119,9 @@ const long double Astro::getDistanciaDoSol() const
 void Astro::setDistanciaDoSol(long double d)
 {
     this->distancia_sol = d;
+}
+
+bool Astro::contains(sf::Vector2f pos)
+{
+    return (forma.getGlobalBounds().contains(pos));
 }

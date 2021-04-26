@@ -27,7 +27,7 @@ class Astro{
         ~Astro();
         char* getNome(void);
         long double getMassa(void);
-        sf::Sprite* getForma(void);
+        sf::Sprite getForma(void);
         Vetor getPosicao(void);
         Vetor getVelocidade(void);
         Vetor getAceleracao(void);
@@ -50,4 +50,7 @@ class Astro{
         void setVelocidadeAngular(float v);
         const long double getDistanciaDoSol() const;
         void setDistanciaDoSol(long double d);
+
+        //função que checa se o mouse está dentro do planeta
+        bool contains(sf::Vector2f pos);
 };

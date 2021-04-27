@@ -23,7 +23,12 @@ int main(){
     Astro *elemento;
     Fisica f;
     sf::Font montserrat;
+    //usado para imprimir os nomes dos planetas
     sf::Text nomes;
+    //usado para imprimir frases em geral na tela
+    sf::Text frasesGerais;
+    //usado para imprimir as velocidades na tela
+    sf::Text velocidades;
     sf::Color bg(46,43,34);
     //variáveis que guardam as informações da posição do mouse na tela
     sf::Mouse mouse;
@@ -32,7 +37,6 @@ int main(){
     sf::Clock clock;
     sf::Time elapsed;
 
-    sf::Text velocidades;
     int i = 0;
 
     montserrat.loadFromFile("../Font/padrao.ttf");
@@ -41,6 +45,12 @@ int main(){
     //Inicialização impressão de nomes
     nomes.setFont(montserrat);
     nomes.setCharacterSize(10);
+
+    //Inicialização impressão de frases gerais
+    frasesGerais.setFont(montserrat);
+    frasesGerais.setCharacterSize(15);
+    frasesGerais.setPosition(1250, 15);
+    frasesGerais.setString("Clique com o botao esquerdo do mouse em um planeta para o remover. \n Clique no direito para o reposicionar.");
     
     //Inicialização impressão de velocidades
     velocidades.setFont(montserrat);
@@ -75,6 +85,8 @@ int main(){
                 nomes.setPosition(elemento->posicaoNaTela().x,elemento->posicaoNaTela().y -10);
                 nomes.setCharacterSize(10);
                 window.draw(nomes);
+
+                window.draw(frasesGerais);
 
                 velocidades.setString("Velocidades Angulares em rad/s:");
                 velocidades.setPosition(20, 10);

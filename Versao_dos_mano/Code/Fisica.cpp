@@ -3,7 +3,7 @@
 using std::cout;
 using std::endl;
 
-Fisica::Fisica():clock(), elapsed()
+Fisica::Fisica():clock(), elapsed(), passou5segundos(false)
 {
 }
 Fisica::~Fisica()
@@ -22,7 +22,6 @@ Vetor Fisica::forcaResultante(Lista *inicio,ElementoLista *atual){
 
     while(cont != NULL){
         aux = cont->getInfo();
-        cont = cont->getProximo();
 
         if(elemento != aux){
             hipotenusa = distanciaEuclidiana(elemento->getPosicao(),aux->getPosicao());
@@ -32,6 +31,7 @@ Vetor Fisica::forcaResultante(Lista *inicio,ElementoLista *atual){
             forca.x += (fmodulo * cos);
             forca.y += (fmodulo * sen);
         }
+        cont = cont->getProximo();
     }
     return forca;
 }
@@ -67,7 +67,6 @@ void Fisica::velocidadeInicial(Lista *l){
     
     while( cont != NULL){
         aux = cont->getInfo();
-        cont = cont->getProximo();
 
         posicaoRelativa.x = aux->getPosicao().x - aux->getCentro_de_Gravidade()->x;
         posicaoRelativa.y = aux->getPosicao().y - aux->getCentro_de_Gravidade()->y;
@@ -89,29 +88,48 @@ void Fisica::velocidadeInicial(Lista *l){
         aux->setVelocidade(velocidade);
         aux->setVelocidadeLinear(sqrt(aux->getDistanciaDoSol() * sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))));
         aux->setVelocidadeAngular(sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))/aux->getDistanciaDoSol());
+        cont = cont->getProximo();
     }
 }
 
 //Atualiza Posicao
-void Fisica::atualizaPosicao(Lista *l){
+void Fisica::atualizaPosicao(Lista *l, std::vector<Astro*>& vector){
     ElementoLista *cont = l->getPrimeiro() ;
     Astro *aux = cont->getInfo();
+    this->elapsed = clock.getElapsedTime();
+    if (this->elapsed.asSeconds()>=5)
+    {
+        this->passou5segundos = true;
+    }
+    if (passou5segundos == true && elapsed.asSeconds()>=5)
+    {
+        vector.clear();
+    }
+    int i = 0;
     Vetor temp;
     while( cont != NULL){
         aux = cont->getInfo();
-        cont = cont->getProximo();
         
         temp.x = aux->getPosicao().x + aux->getVelocidade().x;
         temp.y = aux->getPosicao().y + aux->getVelocidade().y;
         aux->setPosicao(temp);
 
         //atualiza as velocidades após 10 segundos do sistema rodando
-        this->elapsed = clock.getElapsedTime();
-        if (this->elapsed.asSeconds()>=10 && (static_cast<int>(this->elapsed.asSeconds()))%2 == 0)
+        cont = cont->getProximo();
+    }
+    if (passou5segundos == true && elapsed.asSeconds()>=5)
+    {
+        ElementoLista* aux = l->getPrimeiro();
+        Astro* aux2 = aux->getInfo();
+        while (aux != NULL)
         {
-            aux->setVelocidadeLinear(sqrt(aux->getDistanciaDoSol() * sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))));
-            aux->setVelocidadeAngular(sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))/aux->getDistanciaDoSol());
+            aux2 = aux->getInfo();
+            aux2->setVelocidadeLinear(sqrt(aux2->getDistanciaDoSol() * sqrt(pow(aux2->getPosicao().x,2) + pow(aux2->getPosicao().y,2))));
+            aux2->setVelocidadeAngular(sqrt(pow(aux2->getPosicao().x,2) + pow(aux2->getPosicao().y,2))/aux2->getDistanciaDoSol());
+            vector.push_back(aux2);
+            aux = aux->getProximo();
         }
+        clock.restart();
     }
 }
 
@@ -123,11 +141,11 @@ void Fisica::atualizaVelocidade(Lista *l){
 
     while( cont != NULL){
         aux = cont->getInfo();
-        cont = cont->getProximo();
         
         temp.x = aux->getVelocidade().x + aux->getAceleracao().x;
         temp.y = aux->getVelocidade().y + aux->getAceleracao().y;
         aux->setVelocidade(temp);
+        cont = cont->getProximo();
     }
 }
 
@@ -159,20 +177,20 @@ void Fisica::inforAstros(Lista *l){
     sf::Vector2f temp;
     while(cont != NULL){
         aux = cont->getInfo();
-        cont = cont->getProximo();
 
         temp.x = (float) aux->getPosicao().x;
         temp.y = (float) aux->getPosicao().y;
-        cout<<aux->getNome()<<endl;
-        cout<<" : Posicao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
+        //cout<<aux->getNome()<<endl;
+        //cout<<" : Posicao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
         temp.x = (float) aux->getVelocidade().x;
         temp.y = (float) aux->getVelocidade().y;
-        cout<<" : Velocidade ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
+        //cout<<" : Velocidade ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
         temp.x = (float) aux->getAceleracao().x;
         temp.y = (float) aux->getAceleracao().y;
-        cout<<" : Aceleracao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
+        //cout<<" : Aceleracao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
+        cont = cont->getProximo();
     }
-    cout<<"Posicao do CG : ("<<aux->getCentro_de_Gravidade()->x<<" , "<<aux->getCentro_de_Gravidade()->y<<") "<<endl;
+    //cout<<"Posicao do CG : ("<<aux->getCentro_de_Gravidade()->x<<" , "<<aux->getCentro_de_Gravidade()->y<<") "<<endl;
 }
 
 //POsicao do centro de gravidade
@@ -187,11 +205,11 @@ void Fisica::setPosicaoCentroGravidade(Lista *l){
     
     while(cont != NULL){
         aux = cont->getInfo();
-        cont = cont->getProximo();
 
         MassaTotal += aux->getMassa();
         somatorio.x += (aux->getPosicao().x * aux->getMassa());
         somatorio.y += (aux->getPosicao().y * aux->getMassa());
+        cont = cont->getProximo();
     }
 
     cg->x = somatorio.x/MassaTotal;
@@ -200,9 +218,9 @@ void Fisica::setPosicaoCentroGravidade(Lista *l){
 
     while (cont != NULL){
         aux = cont->getInfo();
-        cont = cont->getProximo();
         
         aux->setCentro_de_Gravidade(cg);
+        cont = cont->getProximo();
     }
     
 }

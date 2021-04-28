@@ -10,6 +10,7 @@ class Astro{
     private:
         char *nome;
         long double massa;
+        int posicao_em_lista;
         sf::Texture local;
         sf::Sprite forma;
         Vetor posicao;
@@ -22,11 +23,12 @@ class Astro{
 
     //Atributos físicos(Teóricos)
     public:
-        Astro(long double massaN,const char *nomeN,long double distancia,const char* localIMG);
+        Astro(long double massaN,const char *nomeN,long double distancia,const char* localIMG, int posicaoL);
         Astro();
         ~Astro();
         char* getNome(void);
         long double getMassa(void);
+        const int getPosicaoEmLista() const;
         sf::Sprite getForma(void);
         Vetor getPosicao(void);
         Vetor getVelocidade(void);
@@ -42,11 +44,12 @@ class Astro{
         void desenhar(sf::RenderWindow *Janela);
         sf::Vector2f posicaoNaTela(void);
         //Atribuir especificidades
-        void atributosAstro(long double massaN,const char *nomeN,long double distancia,const char* localIMG);
+        void atributosAstro(long double massaN,const char *nomeN,long double distancia,const char* localIMG, int posicaoL);
 
         std::string getVelocidadeLinear();
         void setVelocidadeLinear(float v);
         std::string getVelocidadeAngular();
+        float getVelocidadeAngularFloat();
         void setVelocidadeAngular(float v);
         const long double getDistanciaDoSol() const;
         void setDistanciaDoSol(long double d);

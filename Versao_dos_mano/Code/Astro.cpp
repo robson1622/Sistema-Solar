@@ -4,8 +4,9 @@
 #define DTERRA 1.5e+11
 #define FATORDISTANCIA 50
 
-Astro::Astro(long double massaN,const char *nomeN,long double posicao,const char* localIMG): velocidade_linear(), velocidade_angular(), distancia_sol(){
-    atributosAstro(massaN,nomeN,posicao,localIMG);
+Astro::Astro(long double massaN,const char *nomeN,long double posicao,const char* localIMG, int posicaoL): velocidade_linear(), velocidade_angular(), distancia_sol(){
+    atributosAstro(massaN,nomeN,posicao,localIMG, posicaoL);
+    this->posicao_em_lista = posicaoL;
 }
 Astro::Astro(){
 }
@@ -19,6 +20,11 @@ char* Astro::getNome(void){
 
 long double Astro::getMassa(void){
     return massa;
+}
+
+const int Astro::getPosicaoEmLista() const
+{
+    return this->posicao_em_lista;
 }
 
 sf::Sprite Astro::getForma(void){
@@ -74,7 +80,7 @@ sf::Vector2f Astro::posicaoNaTela(void){
     return forma.getPosition();
 }
 //Atribuir especificidades
-void Astro::atributosAstro(long double massaN,const char *nomeN,long double distancia,const char* localIMG){
+void Astro::atributosAstro(long double massaN,const char *nomeN,long double distancia,const char* localIMG, int posicaoL){
     nome = (char*) malloc(sizeof(char) * strlen(nomeN));
     strcpy(nome,nomeN);
     massa = massaN;
@@ -84,6 +90,7 @@ void Astro::atributosAstro(long double massaN,const char *nomeN,long double dist
     forma.setPosition(sf::Vector2f(posicao.x,posicao.y));
     forma.setOrigin(sf::Vector2f(0,0));
     forma.setScale({0.2,0.2});
+    this->posicao_em_lista = posicaoL;
 }
 
 std::string Astro::getVelocidadeLinear()
@@ -106,6 +113,10 @@ std::string Astro::getVelocidadeAngular()
    s = std::to_string(velocidade_angular);
 
    return s;
+}
+float Astro::getVelocidadeAngularFloat()
+{
+    return this->velocidade_angular;
 }
 void Astro::setVelocidadeAngular(float v)
 {

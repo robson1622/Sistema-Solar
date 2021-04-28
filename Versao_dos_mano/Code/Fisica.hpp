@@ -10,6 +10,7 @@
 #include "SFML/Window.hpp"
 #include "Lista.hpp"
 #include "Astro.hpp"
+#include <vector>
 
 #pragma once
 
@@ -17,6 +18,7 @@ class Fisica{
     private:
     sf::Clock clock;
     sf::Time elapsed;
+    bool passou5segundos;
     //Calcular Forca Resultante
     Vetor forcaResultante(Lista *inicio,ElementoLista *atual);
 
@@ -30,7 +32,7 @@ class Fisica{
     void velocidadeInicial(Lista *l);
 
     //Atualiza Posicao
-    void atualizaPosicao(Lista *l);
+    void atualizaPosicao(Lista *l, std::vector<Astro*>& vector);
 
     //Atualiza Velocidade
     void atualizaVelocidade(Lista *l);

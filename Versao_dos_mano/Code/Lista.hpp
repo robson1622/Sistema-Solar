@@ -15,6 +15,8 @@ class Lista{
 
         //Adicionar Astro
         void insert(Astro* elemento);
+        //Adiciona um astro, mas na forma de elemento
+        void insertElement(ElementoLista* elemento);
         //retira um elemento específico
         ElementoLista* retirar(ElementoLista* e);
 

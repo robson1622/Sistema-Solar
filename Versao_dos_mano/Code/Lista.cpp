@@ -50,12 +50,70 @@ void Lista::insert(Astro* elemento){
         this->ultimo = novo;
     }
 }
+//Adiciona Astro já em forma de elemento
+//Nessa função é possível inserir o elemento em uma posição específica
+void Lista::insertElement(ElementoLista* elemento)
+{   
+    ElementoLista* aux = this->primeiro;
+    int i = 0;
+    int j = elemento->getInfo()->getPosicaoEmLista();
+    while (i != j && aux != NULL && aux != elemento->getAnterior() && aux != elemento->getProximo())
+    {
+        aux = aux->getProximo();
+        i++;
+    }
+
+    if (aux == NULL)
+    {
+        elemento->setAnterior(this->ultimo);
+        elemento->setProximo(NULL);
+        this->ultimo->setProximo(elemento);
+        this->ultimo = elemento;
+    }
+    else if (aux == this->primeiro)
+    {
+        elemento->setProximo(aux);
+        elemento->setAnterior(NULL);
+        aux->setAnterior(elemento);
+        this->primeiro = elemento;
+    }
+    else if (aux == elemento->getAnterior())
+    {
+        elemento->setAnterior(aux);
+        elemento->setProximo(aux->getProximo());
+        aux->getProximo()->setAnterior(elemento);
+        aux->setProximo(elemento);
+    }
+    else if (aux == elemento->getProximo())
+    {
+        elemento->setProximo(aux);
+        elemento->setAnterior(aux->getAnterior());
+        aux->getAnterior()->setProximo(elemento);
+        aux->setAnterior(elemento);
+    }
+    else
+    {
+        elemento->setProximo(aux);
+        elemento->setAnterior(aux->getAnterior());
+        aux->getAnterior()->setProximo(elemento);
+        aux->setAnterior(elemento);
+    }
+}
+
 ElementoLista* Lista::retirar(ElementoLista* e)
 {
     if (e == this->primeiro)
     {
-        e->getProximo()->setAnterior(NULL);
-        setPrimeiro(e->getProximo());
+        if (e == this->ultimo)
+        {
+            this->primeiro = NULL;
+            this->ultimo = NULL;
+        }
+        else
+        {
+            e->getProximo()->setAnterior(NULL);
+            setPrimeiro(e->getProximo());
+        }
     }
     else if (e == this->ultimo)
     {

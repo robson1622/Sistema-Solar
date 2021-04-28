@@ -93,7 +93,7 @@ void Fisica::velocidadeInicial(Lista *l){
 }
 
 //Atualiza Posicao
-void Fisica::atualizaPosicao(Lista *l, std::vector<Astro*>& vector){
+void Fisica::atualizaPosicao(Lista *l, float* vector){
     ElementoLista *cont = l->getPrimeiro() ;
     Astro *aux = cont->getInfo();
     this->elapsed = clock.getElapsedTime();
@@ -101,11 +101,6 @@ void Fisica::atualizaPosicao(Lista *l, std::vector<Astro*>& vector){
     {
         this->passou5segundos = true;
     }
-    if (passou5segundos == true && elapsed.asSeconds()>=5)
-    {
-        vector.clear();
-    }
-    int i = 0;
     Vetor temp;
     while( cont != NULL){
         aux = cont->getInfo();
@@ -121,13 +116,15 @@ void Fisica::atualizaPosicao(Lista *l, std::vector<Astro*>& vector){
     {
         ElementoLista* aux = l->getPrimeiro();
         Astro* aux2 = aux->getInfo();
+        int i = 0;
         while (aux != NULL)
         {
             aux2 = aux->getInfo();
             aux2->setVelocidadeLinear(sqrt(aux2->getDistanciaDoSol() * sqrt(pow(aux2->getPosicao().x,2) + pow(aux2->getPosicao().y,2))));
             aux2->setVelocidadeAngular(sqrt(pow(aux2->getPosicao().x,2) + pow(aux2->getPosicao().y,2))/aux2->getDistanciaDoSol());
-            vector.push_back(aux2);
+            vector[i] = aux2->getVelocidadeAngularFloat();
             aux = aux->getProximo();
+            i++;
         }
         clock.restart();
     }
@@ -173,7 +170,7 @@ void Fisica::atualizaAceleracao(Lista *l){
 void Fisica::inforAstros(Lista *l){
     ElementoLista *cont = l->getPrimeiro();
     Astro *aux;
-    system("clear");
+    //system("clear");
     sf::Vector2f temp;
     while(cont != NULL){
         aux = cont->getInfo();

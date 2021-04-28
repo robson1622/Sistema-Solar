@@ -32,7 +32,7 @@ class Fisica{
     void velocidadeInicial(Lista *l);
 
     //Atualiza Posicao
-    void atualizaPosicao(Lista *l, std::vector<Astro*>& vector);
+    void atualizaPosicao(Lista *l, float* vector);
 
     //Atualiza Velocidade
     void atualizaVelocidade(Lista *l);

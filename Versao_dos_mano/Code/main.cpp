@@ -7,15 +7,15 @@
 #include "Fisica.hpp"
 
 //Todo processo de criacao e atribuicao das caracteristicas do nosso sistema solar vão aquí
-Lista* sistemaSolar(std::vector<Astro*>& vector);
+Lista* sistemaSolar(float* vector);
 
 //Sistema solar binario (duas estrelas)
 Lista* sistemaBinario();
 
 //funções para ordenar os planetas em ordem crescente
-void permutar(std::vector<Astro*>& vector, int i, int j);
-int particionar(std::vector<Astro*>& vector, int l, int r);
-void quickSort(std::vector<Astro*>& vector, int l, int r);
+void permutar(float* vector, int i, int j);
+int particionar(float* vector, int l, int r);
+void quickSort(float* vector, int l, int r);
 
 // g++ *.cpp -o exe -lsfml-graphics -lsfml-window -lsfml-system
 int main(){
@@ -23,8 +23,8 @@ int main(){
     //a lista de planetas e a variável que é usada para percorrê-los
     Lista *sistema;
     ElementoLista *percorrer = NULL;
-    //vetor que guarda as informações das velocidades angulares
-    std::vector<Astro*> vetorVelocidades;
+    //vetor que guarda as informações das velocidades angulares para serem ordenadas
+    float* vetorVelocidades = (float*)malloc(9*sizeof(float));
     //a pilha na qual os planetas são guardados
     Pilha *pilha = NULL;
     Astro *elemento;
@@ -88,7 +88,7 @@ int main(){
                 elemento = percorrer->getInfo();
                 elemento->desenhar(&window);
 
-                vetorVelocidades.push_back(elemento);
+                //vetorVelocidades.push_back(elemento);
 
                 elapsed = clock.getElapsedTime();
                 
@@ -99,6 +99,7 @@ int main(){
 
                 window.draw(frasesGerais);
 
+                //desenhando as velocidades na ordem dos Astros
                 velocidades.setString("Velocidades Angulares em rad/s:");
                 velocidades.setPosition(20, 10);
                 window.draw(velocidades);
@@ -109,12 +110,21 @@ int main(){
                 window.draw(velocidades);
                 window.draw(nomes);
 
+                //desenhando as velocidades ordenadas
                 velocidades.setString("Velocidades Angulares em ordem crescente: (aperte Q)");
                 velocidades.setPosition(20, 330);
                 window.draw(velocidades);
-                nomes.setString(vetorVelocidades[j]->getNome());
+                //para alinhar a velocidade ordenada com seu respectivo Astro
+                ElementoLista* aux = sistema->getPrimeiro();
+                while(aux != NULL)
+                {
+                    if (aux->getInfo()->getVelocidadeAngularFloat() == vetorVelocidades[j])
+                        nomes.setString(aux->getInfo()->getNome());
+
+                    aux = aux->getProximo();
+                }
                 nomes.setPosition(20, 30*j + 360);
-                velocidades.setString(vetorVelocidades[j]->getVelocidadeAngular());
+                velocidades.setString(std::to_string(vetorVelocidades[j]));
                 velocidades.setPosition(130, 30*j + 360);
                 window.draw(velocidades);
                 window.draw(nomes);
@@ -141,10 +151,14 @@ int main(){
                     }
                 }
 
-                //seve para organizar o vetor de velocidades com planetas
+                //seve para organizar o vetor de velocidades angulares em ordem crescente
                 if (keyboard.isKeyPressed(sf::Keyboard::Q))
                 {
-                    quickSort(vetorVelocidades, 0, vetorVelocidades.size()-1);
+                    if (elapsed.asSeconds() > 1)
+                    {
+                        quickSort(vetorVelocidades, 0, 8);
+                        clock.restart();
+                    }
                 }
                 
                 j++;
@@ -166,7 +180,7 @@ int main(){
 }
 
 //
-Lista* sistemaSolar(std::vector<Astro*>& vector){
+Lista* sistemaSolar(float* vector){
     Lista *sistema = new Lista();
     sistema->start();
     Fisica f;
@@ -175,55 +189,55 @@ Lista* sistemaSolar(std::vector<Astro*>& vector){
     Astro *sol = new Astro();
     sol->atributosAstro((long double)328900 * MTERRA,"Sol",0,"../Astros/Sol.png", 0);
     sistema->insert(sol);
-    vector.push_back(sol);
+    vector[0] = sol->getVelocidadeAngularFloat();
     
     //Mercurio - raio real : 0.04 * RTERRA
     Astro *mercurio = new Astro();
     mercurio->atributosAstro(0.0553 * MTERRA,"Mercurio",0.38 * DTERRA,"../Astros/Mercurio.png", 1);
     sistema->insert(mercurio);
-    vector.push_back(mercurio);
+    vector[1] = mercurio->getVelocidadeAngularFloat();
     
     //Venus - raio real : 0.95 * RTERRA
     Astro *venus = new Astro();
     venus->atributosAstro(0.8150 * MTERRA,"Venus",0.72 * DTERRA,"../Astros/Venus.png", 2);
     sistema->insert(venus);
-    vector.push_back(venus);
+    vector[2] = venus->getVelocidadeAngularFloat();
     
     //Terra - raio real : 1 * RTERRA
     Astro *terra = new Astro();
     terra->atributosAstro(MTERRA,"Terra",DTERRA,"../Astros/Terra.png", 3);
     sistema->insert(terra);
-    vector.push_back(terra);
+    vector[3] = terra->getVelocidadeAngularFloat();
 
     //Marte - raio real : 0.5 * RTERRA
     Astro *marte = new Astro();
     marte->atributosAstro(0.1074 * MTERRA ,"Marte",1.52 * DTERRA,"../Astros/Marte.png", 4);
     sistema->insert(marte);
-    vector.push_back(marte);
+    vector[4] = marte->getVelocidadeAngularFloat();
     
     //Jupiter - raio real : 11.2 * RTERRA 
-    Astro *Jupiter = new Astro();
-    Jupiter->atributosAstro(317.8330 * MTERRA,"Jupiter",5.21 * DTERRA,"../Astros/Jupiter.png", 5);
-    sistema->insert(Jupiter);
-    vector.push_back(Jupiter);
+    Astro *jupiter = new Astro();
+    jupiter->atributosAstro(317.8330 * MTERRA,"Jupiter",5.21 * DTERRA,"../Astros/Jupiter.png", 5);
+    sistema->insert(jupiter);
+    vector[5] = jupiter->getVelocidadeAngularFloat();
     
     //Saturno - raio real : 9.4 * RTERRA 
     Astro *saturno = new Astro();
     saturno->atributosAstro(95.1520 * MTERRA,"Saturno",9.54 * DTERRA,"../Astros/Saturno.png", 6);
     sistema->insert(saturno);
-    vector.push_back(saturno);
+    vector[6] = saturno->getVelocidadeAngularFloat();
 
     //Urano - raio real : 4 * RTERRA 
-    Astro *Urano = new Astro();
-    Urano->atributosAstro(14.5360 * MTERRA,"Urano",19.18 * DTERRA,"../Astros/Urano.png", 7);
-    sistema->insert(Urano);
-    vector.push_back(Urano);
+    Astro *urano = new Astro();
+    urano->atributosAstro(14.5360 * MTERRA,"Urano",19.18 * DTERRA,"../Astros/Urano.png", 7);
+    sistema->insert(urano);
+    vector[7] = urano->getVelocidadeAngularFloat();
 
     //Netuno - raio real : 3.9 * RTERRA 
-    Astro *Netuno = new Astro();
-    Netuno->atributosAstro(17.1470 * MTERRA,"Netuno",30.11 * DTERRA,"../Astros/Netuno.png", 8);
-    sistema->insert(Netuno);
-    vector.push_back(Netuno);
+    Astro *netuno = new Astro();
+    netuno->atributosAstro(17.1470 * MTERRA,"Netuno",30.11 * DTERRA,"../Astros/Netuno.png", 8);
+    sistema->insert(netuno);
+    vector[8] = netuno->getVelocidadeAngularFloat();
     
     f.setPosicaoCentroGravidade(sistema);
     f.atualizaAceleracao(sistema);
@@ -235,22 +249,22 @@ Lista* sistemaBinario(){
     return NULL;
 }
 
-void permutar(std::vector<Astro*>& vector, int i, int j)
+void permutar(float* vector, int i, int j)
 {
-    Astro* aux = vector[i];
+    float aux = vector[i];
     vector[i] = vector[j];
     vector[j] = aux;
 
 }
-int particionar(std::vector<Astro*>& vector, int l, int r)
+int particionar(float* vector, int l, int r)
 {
     int i = 0, j = 0;
     i = l-1;
-    float pivot = vector[r]->getVelocidadeAngularFloat();
+    float pivot = vector[r];
 
     for (j=l ; j<r ; j++)
     {
-        if (vector[j]->getVelocidadeAngularFloat() <= pivot)
+        if (vector[j] <= pivot)
         {
             i++;
             permutar(vector, i, j);
@@ -262,7 +276,7 @@ int particionar(std::vector<Astro*>& vector, int l, int r)
 
     return i;
 }
-void quickSort(std::vector<Astro*>& vector, int l, int r)
+void quickSort(float* vector, int l, int r)
 {
    int q = 0;
 

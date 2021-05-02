@@ -12,7 +12,7 @@ Fisica::~Fisica()
 //Calcular Forca Resultante
 Vetor Fisica::forcaResultante(Lista *inicio,ElementoLista *atual){
     //F = G M m / r²
-    long double G = 6.67e-11;
+    //long double G = 6.67e-11;
     ElementoLista *cont = inicio->getPrimeiro(); 
     Astro *aux;
     Astro *elemento = atual->getInfo();
@@ -86,7 +86,6 @@ void Fisica::velocidadeInicial(Lista *l){
         
         aux->setDistanciaDoSol(distancia);
         aux->setVelocidade(velocidade);
-        aux->setVelocidadeLinear(sqrt(aux->getDistanciaDoSol() * sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))));
         aux->setVelocidadeAngular(sqrt(pow(aux->getPosicao().x,2) + pow(aux->getPosicao().y,2))/aux->getDistanciaDoSol());
         cont = cont->getProximo();
     }
@@ -97,6 +96,7 @@ void Fisica::atualizaPosicao(Lista *l, float* vector){
     ElementoLista *cont = l->getPrimeiro() ;
     Astro *aux = cont->getInfo();
     this->elapsed = clock.getElapsedTime();
+    long double massaSol = aux->getMassa();
     Vetor temp;
     while( cont != NULL){
         aux = cont->getInfo();
@@ -105,7 +105,11 @@ void Fisica::atualizaPosicao(Lista *l, float* vector){
         temp.y = aux->getPosicao().y + aux->getVelocidade().y;
         aux->setPosicao(temp);
 
-        //atualiza as velocidades após 10 segundos do sistema rodando
+        temp.x = aux->getPosicao().x - aux->getCentro_de_Gravidade()->x;
+        temp.y = aux->getPosicao().y - aux->getCentro_de_Gravidade()->y;
+
+        aux->setDistanciaDoSol(sqrt(pow(temp.x,2) + pow(temp.y,2)));
+
         cont = cont->getProximo();
     }
     if (elapsed.asSeconds()>=2)
@@ -116,8 +120,7 @@ void Fisica::atualizaPosicao(Lista *l, float* vector){
         while (aux != NULL)
         {
             aux2 = aux->getInfo();
-            aux2->setVelocidadeLinear(sqrt(aux2->getDistanciaDoSol() * sqrt(pow(aux2->getPosicao().x,2) + pow(aux2->getPosicao().y,2))));
-            aux2->setVelocidadeAngular(sqrt(pow(aux2->getPosicao().x,2) + pow(aux2->getPosicao().y,2))/aux2->getDistanciaDoSol());
+            aux2->setVelocidadeAngular(sqrt((pow(aux2->getVelocidade().x, 2) + pow(aux2->getVelocidade().y, 2))/aux2->getDistanciaDoSol())*(31536000/1000000));
             vector[i] = aux2->getVelocidadeAngularFloat();
             aux = aux->getProximo();
             i++;

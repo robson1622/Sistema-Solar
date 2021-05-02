@@ -77,7 +77,7 @@ void Principal::executar()
                 window.draw(nomes);*/
 
                 //desenhando as velocidades ordenadas
-                velocidades.setString("Velocidades Angulares em ordem crescente: (aperte Q)");
+                velocidades.setString("Velocidades Angulares (rad/ano) em ordem crescente: (aperte Q)");
                 velocidades.setPosition(20, 10);
                 window.draw(velocidades);
                 
@@ -138,6 +138,7 @@ void Principal::executar()
             window.display();
             i = 0;
         }
+        f.setPosicaoCentroGravidade(sistema);
         f.atualizaAceleracao(sistema);
         f.atualizaVelocidade(sistema);
         f.atualizaPosicao(sistema, vetorVelocidades);

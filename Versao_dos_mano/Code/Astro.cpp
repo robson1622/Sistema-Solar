@@ -4,7 +4,7 @@
 #define DTERRA 1.5e+11
 #define FATORDISTANCIA 50
 
-Astro::Astro(long double massaN,const char *nomeN,long double posicao,const char* localIMG, int posicaoL): velocidade_linear(), velocidade_angular(), distancia_sol(){
+Astro::Astro(long double massaN,const char *nomeN,long double posicao,const char* localIMG, int posicaoL): velocidade_angular(), distancia_sol(){
     atributosAstro(massaN,nomeN,posicao,localIMG, posicaoL);
     this->posicao_em_lista = posicaoL;
 }
@@ -93,20 +93,6 @@ void Astro::atributosAstro(long double massaN,const char *nomeN,long double dist
     this->posicao_em_lista = posicaoL;
 }
 
-std::string Astro::getVelocidadeLinear()
-{
-   
-   //velocidade_linear = sqrt((velocidade.x*velocidade.x)+(velocidade.y*velocidade.y));
-
-   std::string s;
-   s = std::to_string(velocidade_linear);
-
-   return s;
-}
-void Astro::setVelocidadeLinear(float v)
-{
-    this->velocidade_linear = v;
-}
 std::string Astro::getVelocidadeAngular()
 {
    std::string s;

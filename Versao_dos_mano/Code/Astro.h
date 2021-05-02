@@ -4,6 +4,9 @@
 #include "Vetor.h"
 #include <string.h>
 #include <iostream>
+
+#define G 6.67e-11
+
 #pragma once
 
 class Astro{
@@ -17,7 +20,6 @@ class Astro{
         Vetor velocidade;
         Vetor aceleracao;
         Vetor *centro_de_gravidade;
-        float velocidade_linear;
         float velocidade_angular;
         long double distancia_sol;
 
@@ -46,8 +48,6 @@ class Astro{
         //Atribuir especificidades
         void atributosAstro(long double massaN,const char *nomeN,long double distancia,const char* localIMG, int posicaoL);
 
-        std::string getVelocidadeLinear();
-        void setVelocidadeLinear(float v);
         std::string getVelocidadeAngular();
         float getVelocidadeAngularFloat();
         void setVelocidadeAngular(float v);

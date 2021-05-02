@@ -1,9 +1,9 @@
-#include "Fisica.hpp"
+#include "Fisica.h"
 #include <iostream>
 using std::cout;
 using std::endl;
 
-Fisica::Fisica():clock(), elapsed(), passou5segundos(false)
+Fisica::Fisica():clock(), elapsed()
 {
 }
 Fisica::~Fisica()
@@ -97,10 +97,6 @@ void Fisica::atualizaPosicao(Lista *l, float* vector){
     ElementoLista *cont = l->getPrimeiro() ;
     Astro *aux = cont->getInfo();
     this->elapsed = clock.getElapsedTime();
-    if (this->elapsed.asSeconds()>=5)
-    {
-        this->passou5segundos = true;
-    }
     Vetor temp;
     while( cont != NULL){
         aux = cont->getInfo();
@@ -112,7 +108,7 @@ void Fisica::atualizaPosicao(Lista *l, float* vector){
         //atualiza as velocidades após 10 segundos do sistema rodando
         cont = cont->getProximo();
     }
-    if (passou5segundos == true && elapsed.asSeconds()>=5)
+    if (elapsed.asSeconds()>=2)
     {
         ElementoLista* aux = l->getPrimeiro();
         Astro* aux2 = aux->getInfo();
@@ -177,17 +173,17 @@ void Fisica::inforAstros(Lista *l){
 
         temp.x = (float) aux->getPosicao().x;
         temp.y = (float) aux->getPosicao().y;
-        //cout<<aux->getNome()<<endl;
-        //cout<<" : Posicao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
+        cout<<aux->getNome()<<endl;
+        cout<<" : Posicao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
         temp.x = (float) aux->getVelocidade().x;
         temp.y = (float) aux->getVelocidade().y;
-        //cout<<" : Velocidade ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
+        cout<<" : Velocidade ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
         temp.x = (float) aux->getAceleracao().x;
         temp.y = (float) aux->getAceleracao().y;
-        //cout<<" : Aceleracao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
+        cout<<" : Aceleracao ( "<<temp.x<<" , "<<temp.y<<" )"<<endl;
         cont = cont->getProximo();
     }
-    //cout<<"Posicao do CG : ("<<aux->getCentro_de_Gravidade()->x<<" , "<<aux->getCentro_de_Gravidade()->y<<") "<<endl;
+    cout<<"Posicao do CG : ("<<aux->getCentro_de_Gravidade()->x<<" , "<<aux->getCentro_de_Gravidade()->y<<") "<<endl;
 }
 
 //POsicao do centro de gravidade

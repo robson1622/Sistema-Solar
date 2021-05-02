@@ -1,5 +1,5 @@
-#include "Lista.hpp"
-#include "Astro.hpp"
+#include "Lista.h"
+#include "Astro.h"
 
 //Criar Astro
 Lista::Lista():primeiro(NULL), ultimo(NULL){}
@@ -147,6 +147,11 @@ ElementoLista* Lista::getUltimo()
 void Lista::setUltimo(ElementoLista* aux)
 {
     this->ultimo = aux;
+}
+
+bool Lista::isEmpty()
+{
+    return (this->primeiro == NULL);
 }
 
 void Lista::destroy(void){

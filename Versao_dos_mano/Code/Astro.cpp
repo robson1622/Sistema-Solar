@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include "Astro.hpp"
+#include "Astro.h"
 #define DTERRA 1.5e+11
 #define FATORDISTANCIA 50
 

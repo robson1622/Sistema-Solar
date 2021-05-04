@@ -169,7 +169,7 @@ void Fisica::atualizaAceleracao(Lista *l){
 void Fisica::inforAstros(Lista *l){
     ElementoLista *cont = l->getPrimeiro();
     Astro *aux;
-    //system("clear");
+    system("clear");
     sf::Vector2f temp;
     while(cont != NULL){
         aux = cont->getInfo();
